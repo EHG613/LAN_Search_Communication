@@ -22,15 +22,16 @@ public class MainActivity extends AppCompatActivity {
      * 是否开启了搜索响应和通信响应
      */
     private boolean isOpen;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.btnOpenResponser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isOpen){
+                if (isOpen) {
                     //停止响应搜索
                     DeviceSearchResponser.close();
                     isOpen = false;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                     //停止接收通信命令
                     CommandReceiver.close();
                     Toast.makeText(MainActivity.this, "已经关闭响应程序！", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     //开始响应搜索
                     DeviceSearchResponser.open();
                     isOpen = true;
@@ -50,7 +51,14 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(MainActivity.this, "Receive:"+command, Toast.LENGTH_SHORT).show();
+                                    if (command.startsWith("http")) {
+                                        if (binding.videoView.isPlaying()) {
+                                            binding.videoView.stopPlayback();
+                                        }
+                                        binding.videoView.setVideoPath(command);
+                                        binding.videoView.start();
+                                    }
+                                    Toast.makeText(MainActivity.this, "Receive:" + command, Toast.LENGTH_SHORT).show();
                                 }
                             });
                             return CommunicationKey.RESPONSE_OK +

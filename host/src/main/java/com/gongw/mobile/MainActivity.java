@@ -38,14 +38,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        adapter = new SimpleAdapter<Device>(deviceList, R.layout.item_device, BR.device){
+        adapter = new SimpleAdapter<Device>(deviceList, R.layout.item_device, BR.device) {
             @Override
             public void addListener(View root, final Device itemData, int position) {
                 root.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //点击列表项时发送命令
-                        sendCommand(itemData);
+                        sendCommand(itemData, " Are you OK!");
                     }
                 });
             }
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 开始异步搜索局域网中的设备
      */
-    private void startSearch(){
+    private void startSearch() {
         DeviceSearcher.search(new DeviceSearcher.OnSearchListener() {
             @Override
             public void onSearchStart() {
@@ -87,15 +87,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void sendCommand(Device device){
+    private void sendCommand(Device device, final String text) {
         //发送命令，命令内容为"hello!"
-        Command command = new Command("Are you OK!", new Command.Callback() {
+        Command command = new Command(text, new Command.Callback() {
             @Override
             public void onRequest(String msg) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, "Request: Are you OK!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Request:" + text, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, "Success:"+msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Success:" + msg, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, "Error:"+msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Error:" + msg, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, "Echo："+msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Echo：" + msg, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -134,4 +134,15 @@ public class MainActivity extends AppCompatActivity {
         CommandSender.addCommand(command);
     }
 
+    public void res1(View view) {
+        if (deviceList.size() > 0) {
+            sendCommand(deviceList.get(0), "http://men-res.codyy.cn/a.mp4");
+        }
+    }
+
+    public void res2(View view) {
+        if (deviceList.size() > 0) {
+            sendCommand(deviceList.get(0), "http://men-res.codyy.cn/RPReplay_Final1555570361.MP4");
+        }
+    }
 }
