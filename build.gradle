@@ -3,7 +3,7 @@
 buildscript {
     
     repositories {
-        maven { url 'http://10.5.31.150:8081/repository/mobile' }
+        maven { url 'http://men.codyy.cn/repository/mobile/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0'
@@ -16,7 +16,7 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'http://10.5.31.150:8081/repository/mobile' }
+        maven { url 'http://men.codyy.cn/repository/mobile/' }
     }
 }
 
