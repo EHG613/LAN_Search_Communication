@@ -22,12 +22,27 @@
                 android:layout_height="wrap_content"
                 android:onClick="res1"
                 android:text="资源1" />
+
             <Button
                 android:id="@+id/btn_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="res2"
                 android:text="资源2" />
+
+            <Button
+                android:id="@+id/btn_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="res3"
+                android:text="镜像投屏" />
+
+            <Button
+                android:id="@+id/btn_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="res4"
+                android:text="关闭镜像" />
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 

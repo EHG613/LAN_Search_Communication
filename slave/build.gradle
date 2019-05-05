@@ -3,11 +3,14 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
 
-
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 
     defaultConfig {
         applicationId "com.gongw.device"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -36,4 +39,8 @@ dependencies {
 
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation project(':remote')
+    //完整版引入
+    implementation ('com.shuyu:GSYVideoPlayer:6.0.3'){
+        exclude group: 'com.android.support'
+    }
 }

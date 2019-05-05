@@ -5,24 +5,36 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.codyy.robinsdk.RBPlayAndroid;
+import com.codyy.robinsdk.impl.RBManagerAndroid;
 import com.gongw.device.databinding.ActivityMainBinding;
 import com.gongw.remote.communication.CommunicationKey;
 import com.gongw.remote.communication.slave.CommandReceiver;
 import com.gongw.remote.search.DeviceSearchResponser;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
+
+import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_MEDIA_ALL;
+import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_MEDIA_VIDEO;
+import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_RENDER_ASPECT_RATIO;
+import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_RENDER_FULL_SCREEN;
 
 /**
  * Created by gongw on 2018/10/16.
  */
 
 public class MainActivity extends AppCompatActivity {
+    private final String TAG = "Main";
     /**
      * 是否开启了搜索响应和通信响应
      */
     private boolean isOpen;
     ActivityMainBinding binding;
+    private RBManagerAndroid mManager = null;
+    private RBPlayAndroid mPlayer1 = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,11 +64,20 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     if (command.startsWith("http")) {
+                                        binding.videoView.setVisibility(View.VISIBLE);
+                                        binding.surfaceView.setVisibility(View.GONE);
                                         if (binding.videoView.isPlaying()) {
                                             binding.videoView.stopPlayback();
                                         }
                                         binding.videoView.setVideoPath(command);
                                         binding.videoView.start();
+                                    } else if (command.startsWith("rtmp://")) {
+                                        binding.videoView.setVisibility(View.GONE);
+                                        binding.surfaceView.setVisibility(View.GONE);
+//                                        binding.gsyPlayer.setUp(command,true,command);
+//                                        binding.gsyPlayer.startPlayLogic();
+                                        mPlayer1.setUri(command);
+                                        mPlayer1.start();
                                     }
                                     Toast.makeText(MainActivity.this, "Receive:" + command, Toast.LENGTH_SHORT).show();
                                 }
@@ -72,6 +93,55 @@ public class MainActivity extends AppCompatActivity {
         });
         binding.setIsOpen(isOpen);
         binding.executePendingBindings();
+        initRobin();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        binding.gsyPlayer.onVideoPause();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.gsyPlayer.onVideoResume();
+    }
+    private void initRobin() {
+        mManager = RBManagerAndroid.getSingleton();
+        mManager.enableLog();
+        mManager.init();
+        mPlayer1 = mManager.createPlayer();
+        mPlayer1.init();
+        mPlayer1.setVideoHardwareDec(true);
+        mPlayer1.setVideoRenderMode(RB_RENDER_ASPECT_RATIO);
+        mPlayer1.setMediaMode(RB_MEDIA_ALL, binding.surfaceView);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        releasePlayer(mManager, mPlayer1);
+        GSYVideoManager.releaseAllVideos();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //释放所有
+        binding.gsyPlayer.setVideoAllCallBack(null);
+        super.onBackPressed();
+    }
+
+    private void releasePlayer(RBManagerAndroid manager, RBPlayAndroid player) {
+        try {
+            if (manager != null && player != null) {
+                player.stop();
+                while (player.release() != 0) {
+                    Thread.sleep(10);
+                }
+                manager.deletePlayer(player);
+            }
+        } catch (InterruptedException ex) {
+            Log.e(TAG, "releasePlayer: Interrupted Exception is " + ex);
+        }
+    }
 }

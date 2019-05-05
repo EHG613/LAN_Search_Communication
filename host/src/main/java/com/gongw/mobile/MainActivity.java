@@ -1,7 +1,13 @@
 package com.gongw.mobile;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.databinding.DataBindingUtil;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +20,7 @@ import com.gongw.remote.Device;
 import com.gongw.remote.communication.host.Command;
 import com.gongw.remote.communication.host.CommandSender;
 import com.gongw.remote.search.DeviceSearcher;
+import com.lijian.screencast.ScreencastService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +39,68 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+        Intent screen = new Intent(this, ScreencastService.class);
+        bindService(screen, mScreenMirror, Context.BIND_AUTO_CREATE);
         //开始搜索局域网中的设备
         startSearch();
     }
+
+    ScreencastService.ScreenBinder msScreenBinder;
+    /**
+     * 投屏连接
+     */
+    private ServiceConnection mScreenMirror = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            msScreenBinder = (ScreencastService.ScreenBinder) service;
+            msScreenBinder.setmOnScreen(new ScreencastService.OnScreen() {
+
+
+                @Override
+                public void connectSuccess(MediaProjectionManager mediaProjectionManager) {
+                    startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(),
+                            PERMISSION_CODE);
+                }
+
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onStop() {
+//                    ToastUtil.show(MainActivity.this, "投屏结束");
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+    public final static int PERMISSION_CODE = 0x0a1;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != PERMISSION_CODE) {
+            return;
+        }
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(this,
+                    "User denied screen sharing permission", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        msScreenBinder.startScreen(resultCode, data);
+        if (deviceList.size() > 0) {
+            sendCommand(deviceList.get(0), ScreencastService.mStream);
+        }
+    }
+
 
     private void init() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -142,7 +208,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void res2(View view) {
         if (deviceList.size() > 0) {
-            sendCommand(deviceList.get(0), "http://men-res.codyy.cn/RPReplay_Final1555570361.MP4");
+            sendCommand(deviceList.get(0), "rtmp://10.5.31.218:1935/dms/lijian");
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mScreenMirror);
+    }
+
+    public void res3(View view) {
+        if (msScreenBinder != null)
+            msScreenBinder.connect();
+    }
+
+    public void res4(View view) {
+        if (msScreenBinder != null)
+            msScreenBinder.stopScreen();
     }
 }
