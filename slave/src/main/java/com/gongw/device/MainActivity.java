@@ -15,10 +15,8 @@ import com.gongw.device.databinding.ActivityMainBinding;
 import com.gongw.remote.communication.CommunicationKey;
 import com.gongw.remote.communication.slave.CommandReceiver;
 import com.gongw.remote.search.DeviceSearchResponser;
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
 
 import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_MEDIA_ALL;
-import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_MEDIA_VIDEO;
 import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_RENDER_ASPECT_RATIO;
 import static com.codyy.robinsdk.impl.RBManagerAndroid.RB_RENDER_FULL_SCREEN;
 
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                         binding.videoView.start();
                                     } else if (command.startsWith("rtmp://")) {
                                         binding.videoView.setVisibility(View.GONE);
-                                        binding.surfaceView.setVisibility(View.GONE);
+                                        binding.surfaceView.setVisibility(View.VISIBLE);
 //                                        binding.gsyPlayer.setUp(command,true,command);
 //                                        binding.gsyPlayer.startPlayLogic();
                                         mPlayer1.setUri(command);
@@ -93,19 +91,11 @@ public class MainActivity extends AppCompatActivity {
         });
         binding.setIsOpen(isOpen);
         binding.executePendingBindings();
+        binding.videoView.setVisibility(View.GONE);
         initRobin();
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        binding.gsyPlayer.onVideoPause();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        binding.gsyPlayer.onVideoResume();
-    }
+
     private void initRobin() {
         mManager = RBManagerAndroid.getSingleton();
         mManager.enableLog();
@@ -115,19 +105,21 @@ public class MainActivity extends AppCompatActivity {
         mPlayer1.setVideoHardwareDec(true);
         mPlayer1.setVideoRenderMode(RB_RENDER_ASPECT_RATIO);
         mPlayer1.setMediaMode(RB_MEDIA_ALL, binding.surfaceView);
+//        mPlayer1.setUri("rtmp://localhost:1935/live/screen");
+//        mPlayer1.setUri("rtmp://10.5.31.218:1935/dms/lijian");
+//        mPlayer1.setUri("rtmp://10.5.223.100:1935/live/screen");
+//        mPlayer1.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         releasePlayer(mManager, mPlayer1);
-        GSYVideoManager.releaseAllVideos();
     }
 
     @Override
     public void onBackPressed() {
         //释放所有
-        binding.gsyPlayer.setVideoAllCallBack(null);
         super.onBackPressed();
     }
 

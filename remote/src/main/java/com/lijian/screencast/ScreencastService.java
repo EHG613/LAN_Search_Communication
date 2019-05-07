@@ -61,8 +61,9 @@ public class ScreencastService extends Service {
     private int mScreenFrameRate = 30;
     private boolean mScreen;
     private ScreenBinder mScreenBinder;
-    public static String mStream = "rtmp://10.5.31.218:1935/dms/screen";
-//    public static String mStream = "rtmp://10.5.223.25:1935/live/screen";
+//    public static String mStream = "rtmp://10.5.31.218:1935/dms/screen";
+    public static String mStream = "rtmp://10.5.223.25:1935/live/screen";
+//    public static String mStream = "rtmp://localhost:1935/live/screen";
 
     public ScreencastService() {
     }
@@ -78,8 +79,8 @@ public class ScreencastService extends Service {
             windowManager.getDefaultDisplay().getMetrics(metrics);
         }
         mScreenDensity = metrics.densityDpi;
-        mScreenWidth = metrics.widthPixels;
-        mScreenHeight = metrics.heightPixels;
+//        mScreenWidth = metrics.widthPixels;
+//        mScreenHeight = metrics.heightPixels;
         mScreenBinder = new ScreenBinder();
     }
 
@@ -155,11 +156,11 @@ public class ScreencastService extends Service {
                 break;
             }
         }
-        mRBPublishAndroid.setMediaProjection(mMediaProjection, mScreenDensity);
-        mRBPublishAndroid.setVideoResolution(mScreenWidth, mScreenHeight);
-        mRBPublishAndroid.setVideoFrameRate(30);
+        mRBPublishAndroid.setMediaProjection(mMediaProjection, 1);
+        mRBPublishAndroid.setVideoResolution(1080, 1920);
+//        mRBPublishAndroid.setVideoFrameRate(10);
         mRBPublishAndroid.setVideoHardwareEnc(true);
-        mRBPublishAndroid.setVideoBitRate(2048);
+        mRBPublishAndroid.setVideoBitRate(2000);
         mRBPublishAndroid.setMediaMode(RB_MEDIA_ALL, null);
     }
 

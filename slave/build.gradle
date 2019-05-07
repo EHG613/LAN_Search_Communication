@@ -20,6 +20,9 @@ android {
             doNotStrip '*/mips/*.so'
             doNotStrip '*/mips64/*.so'
         }
+        ndk {
+            abiFilters "armeabi-v7a"//, "x86", "arm64-v8a", "x86_64"
+        }
     }
 
     buildTypes {
@@ -28,7 +31,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     dataBinding{
         enabled = true
     }
@@ -39,8 +41,4 @@ dependencies {
 
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation project(':remote')
-    //完整版引入
-    implementation ('com.shuyu:GSYVideoPlayer:6.0.3'){
-        exclude group: 'com.android.support'
-    }
 }

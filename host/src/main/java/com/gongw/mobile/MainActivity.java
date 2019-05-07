@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         msScreenBinder.startScreen(resultCode, data);
         if (deviceList.size() > 0) {
             sendCommand(deviceList.get(0), ScreencastService.mStream);
+//            sendCommand(deviceList.get(0), "rtmp://10.5.223.100:1935/live/screen");
         }
     }
 
