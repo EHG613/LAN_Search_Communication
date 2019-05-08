@@ -61,8 +61,8 @@ public class ScreencastService extends Service {
     private int mScreenFrameRate = 30;
     private boolean mScreen;
     private ScreenBinder mScreenBinder;
-//    public static String mStream = "rtmp://10.5.31.218:1935/dms/screen";
-    public static String mStream = "rtmp://10.5.223.25:1935/live/screen";
+    //    public static String mStream = "rtmp://10.5.31.218:1935/dms/screen";
+    public static String mStream = "rtmp://10.5.223.104:1935/live/lijian";
 //    public static String mStream = "rtmp://localhost:1935/live/screen";
 
     public ScreencastService() {
@@ -142,7 +142,7 @@ public class ScreencastService extends Service {
         mRBPublishAndroid.setUri(mStream);
         int videoDeviceNum = (int) mRBPublishAndroid.getVideoDeviceNum();
         for (int i = 0; i < videoDeviceNum; i++) {
-            if ("ScreenCapture".equals(mRBPublishAndroid.getVideoDeviceDescribe(i))||"Screen Capture".equals(mRBPublishAndroid.getVideoDeviceDescribe(i))) {
+            if ("ScreenCapture".equals(mRBPublishAndroid.getVideoDeviceDescribe(i)) || "Screen Capture".equals(mRBPublishAndroid.getVideoDeviceDescribe(i))) {
                 Log.d("----", "Screen Capture");
                 mRBPublishAndroid.setVideoDevice(i, RBManagerAndroid.RB_LANDSCAPE_LEFT);
                 break;
@@ -150,14 +150,14 @@ public class ScreencastService extends Service {
         }
         int audioDeviceNum = (int) mRBPublishAndroid.getAudioDeviceNum();
         for (int i = 0; i < audioDeviceNum; i++) {
-            if ("AppAudioPcm".equals(mRBPublishAndroid.getAudioDeviceDescribe(i))||"AppAudio".equals(mRBPublishAndroid.getAudioDeviceDescribe(i))) {
+            if ("AppAudioPcm".equals(mRBPublishAndroid.getAudioDeviceDescribe(i)) || "AppAudio".equals(mRBPublishAndroid.getAudioDeviceDescribe(i))) {
                 Log.d("----", "AppAudio");
                 mRBPublishAndroid.setAudioDevice(i);
                 break;
             }
         }
         mRBPublishAndroid.setMediaProjection(mMediaProjection, 1);
-        mRBPublishAndroid.setVideoResolution(1080, 1920);
+        mRBPublishAndroid.setVideoResolution(720, 1280);
 //        mRBPublishAndroid.setVideoFrameRate(10);
         mRBPublishAndroid.setVideoHardwareEnc(true);
         mRBPublishAndroid.setVideoBitRate(2000);
@@ -194,7 +194,11 @@ public class ScreencastService extends Service {
             if (mRBPublishAndroid != null) {
                 mRBPublishAndroid.stop();
             }
+            if (mMediaProjection != null) {
+                mMediaProjection.stop();
+            }
             mScreen = false;
+
         }
 
         public void connect() {
