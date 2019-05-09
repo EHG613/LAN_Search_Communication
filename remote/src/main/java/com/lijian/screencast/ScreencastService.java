@@ -61,8 +61,8 @@ public class ScreencastService extends Service {
     private int mScreenFrameRate = 30;
     private boolean mScreen;
     private ScreenBinder mScreenBinder;
-    //    public static String mStream = "rtmp://10.5.31.218:1935/dms/screen";
-    public static String mStream = "rtmp://10.5.223.104:1935/live/lijian";
+        public static String mStream = "rtmp://10.5.31.218:1935/dms/screen";
+//    public static String mStream = "rtmp://10.5.223.104:1935/live/lijian";
 //    public static String mStream = "rtmp://localhost:1935/live/screen";
 
     public ScreencastService() {
@@ -158,9 +158,9 @@ public class ScreencastService extends Service {
         }
         mRBPublishAndroid.setMediaProjection(mMediaProjection, 1);
         mRBPublishAndroid.setVideoResolution(720, 1280);
-//        mRBPublishAndroid.setVideoFrameRate(10);
+        mRBPublishAndroid.setVideoFrameRate(25);
         mRBPublishAndroid.setVideoHardwareEnc(true);
-        mRBPublishAndroid.setVideoBitRate(2000);
+        mRBPublishAndroid.setVideoBitRate(1500);
         mRBPublishAndroid.setMediaMode(RB_MEDIA_ALL, null);
     }
 
